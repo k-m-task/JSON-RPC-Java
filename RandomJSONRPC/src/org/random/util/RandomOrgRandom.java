@@ -327,7 +327,7 @@ public class RandomOrgRandom extends Random {
 		} else {
 			
 			// set the domain value and read the next n bits into r
-			int d = nextPow2(n);
+			int d = this.nextPow2(n);
 			r = next(this.log2(n));
 			
 			// test if r is less than n, and d is at least as large as n
