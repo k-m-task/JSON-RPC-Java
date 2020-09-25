@@ -320,15 +320,29 @@ public class RandomOrgRandom extends Random {
 		// If max is not a power of 2, we calculate max' which is the smallest power of 2
 		// greater than max. We then read the next log2(max') bits from the
 		// cached data and transform them to an int. If the value is < max,
-		// return it.  Otherwise we discard it and read the next log(max') bits,
-		// etc.  In the worst case, this is wasteful, but it achieves a uniform
-		// distribution regardless of the range.
+		// return it.  Otherwise we subtract max from it, as well as from
+		// the domain variable d, and read the next single bit into r.
+		// In the worst case, this is wasteful, but it achieves
+		// a uniform distribution regardless of the range.
 		} else {
-
-			int nC = nextPow2(n);
-			do {
-				r = next(this.log2(nC));
-			} while (r >= n && r != -1);
+			
+			// set the domain value and read the next n bits into r
+			int d = nextPow2(n);
+			r = next(this.log2(n));
+			
+			// test if r is less than n, and d is at least as large as n
+			while (r >= n || d < n) {
+				
+				// both values are out of range, reduce them
+				if (r >= n && d >= n) {
+					d -= n;
+					r -= n;
+				}
+				
+				// shift both values left and read another bit
+				d = d << 1;
+				r = (r << 1) | next(1);
+			}
 		}
 		
 		return r;
